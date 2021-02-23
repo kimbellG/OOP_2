@@ -58,11 +58,11 @@ namespace gym
 
 			friend std::ostream &operator<<(std::ostream &out, const gym::simulator::Equipment &source)
 			{
-				out << std::setw(12) << std::left << source.get_type() 
-					<< std::setw(12) << source.get_muscle_group()
-					<< std::setw(12) << source.__name 
-					<< std::setw(6) << source.__cost
-					<< std::setw(32) << source.get_purchdate("%x")
+				out << std::setw(22) << std::left << source.get_type().substr(0, 22)
+					<< std::setw(22) << source.get_muscle_group().substr(0, 22)
+					<< std::setw(35) << source.__name.substr(0, 35)
+					<< std::setw(15) << source.__cost
+					<< std::setw(18) << source.get_purchdate("%x").substr(0, 18)
 					<< std::endl;
 
 				return out;
