@@ -27,8 +27,7 @@ namespace gym
 			Equipment(const std::string &name, 
 				   	types::money cost, const std::tm &purchase_date)
 				: __name(name), __cost(cost), __purchase_date(purchase_date)
-			{
-			}
+			{ }
 
 			std::string get_name() const
 			{
@@ -58,11 +57,11 @@ namespace gym
 
 			friend std::ostream &operator<<(std::ostream &out, const gym::simulator::Equipment &source)
 			{
-				out << std::setw(22) << std::left << source.get_type().substr(0, 22)
-					<< std::setw(22) << source.get_muscle_group().substr(0, 22)
-					<< std::setw(35) << source.__name.substr(0, 35)
+				out << std::setw(50) << std::left << source.get_type()
+					<< std::setw(50) << source.get_muscle_group()
+					<< std::setw(50) << source.__name
 					<< std::setw(15) << source.__cost
-					<< std::setw(18) << source.get_purchdate("%x").substr(0, 18)
+					<< std::setw(18) << source.get_purchdate("%x")
 					<< std::endl;
 
 				return out;
@@ -88,9 +87,26 @@ namespace gym
 
 				std::string get_muscle_group() const override final
 				{
-					return "General";
+					return "Базовые";
 				}
 
+		};
+
+		class SpecialEquipment
+			: public Equipment
+		{
+			std::string __muscle_group;
+		public:
+			SpecialEquipment(const std::string &name, const std::string muscle_group,
+				   	types::money cost, const std::tm &purchase_data)
+				: Equipment(name, cost, purchase_data), __muscle_group(muscle_group)
+			{
+			}
+
+			std::string get_muscle_group() const override final
+			{
+				return __muscle_group;
+			}
 		};
 
 		 class Dumbells
@@ -105,10 +121,41 @@ namespace gym
 
 				 std::string get_type() const override
 				 {
-					 return "Dumbells";
+					 return "Гантели";
 				 }
 		};
-	}
+
+		class ExersizeMachine
+			: public SpecialEquipment
+		{
+		public:
+			ExersizeMachine(const std::string &name, const std::string &muscle_group,
+					types::money cost, const std::tm &purchase_data)
+				: SpecialEquipment(name, muscle_group, cost, purchase_data)
+				{
+				}
+
+			std::string get_type() const override
+			{
+				return "Тренажеры";
+			}
+		};
+
+		class Other
+			: public GeneralEquipment
+		{
+		public:
+			Other(const std::string &name, types::money cost, const std::tm &purchase_data)
+				: GeneralEquipment(name, cost, purchase_data)
+			{
+			}
+
+			std::string get_type() const override
+			{
+				return "Вспомогательное";
+			}
+		};
+	};
 }
 		
 #endif // __CLASSES_HPP__
