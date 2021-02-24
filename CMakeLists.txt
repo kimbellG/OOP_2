@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)	  #Указываем версию сmake
 project(result VERSION 1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-add_executable(${PROJECT_NAME} main.cpp gym.cpp eqinterface.cpp)  #Указываем результат работы и все исходники
+add_executable(${PROJECT_NAME} main.cpp src/gym.cpp)  #Указываем результат работы и все исходники
 
 set_target_properties(${PROJECT_NAME} 
 	PROPERTIES

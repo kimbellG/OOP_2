@@ -8,9 +8,7 @@
 #include <memory>
 #include <iomanip>
 
-#include <bprinter/table_printer.h>
-
-#include "../eqinterface.h"
+#include <../bprinter-master/include/bprinter/table_printer.h>
 
 namespace types
 {
@@ -30,43 +28,7 @@ namespace gym
 
 			bprinter::TablePrinter __tp;
 		public:
-			class Input
-			{
-				std::vector<std::string> __elements;
-				std::tm *__data;
-			public:
-				enum field
-				{
-					name = 0,
-					cost,
-					data,
-					count
-
-				};
-
-
-				Input()
-				{
-					auto base = std::make_unique<std::vector<std::string>>();
-					const std::vector<std::string> message = {"\tName: ", "\tCost: "};
-					std::string in;
-
-					for (std::size_t i = 0; i < count - 1; i++)
-					{
-						std::cout << message[i];
-						std::cin >> in;
-
-						__elements.push_back(in);
-					}
-
-					char time_str[1024];
-					time_t t = time(nullptr);
-					__data = localtime(&t);
-				}
-
-				virtual simulator::Equipment *create_eq() = 0;
-			};
-			Equipment(const std::string &name, 
+					Equipment(const std::string &name, 
 					types::money cost, const std::string &purchase_date)
 				: __name(name), __cost(cost), __data(purchase_date), __tp(&std::cout)
 				{
@@ -121,11 +83,9 @@ namespace gym
 			virtual ~Equipment()
 			{
 			}
-			
-			
 		};
 
-				class GeneralEquipment
+		class GeneralEquipment
 			: public Equipment
 		{
 			public:

@@ -2,9 +2,31 @@
 #include <ctime>
 #include <vector>
 #include <memory>
-#include <windows.h>
 
-#include "include/data.hpp"
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#include "include/gym.hpp"
+#include "include/eqinterface.h"
+
+std::string input_name()
+{
+	std::string name;
+	gym::input_interface::clear_buf();
+	std::getline(std::cin, name);
+	return name;
+}
+
+void term_handle()
+{
+	std::cout << "My handle" << std::endl;
+	std::cout << "closing program";
+	gym::input_interface::pause();
+	exit(1);
+}
+
+void (*std_term)() = std::set_terminate(term_handle);
 
 int main()
 {
@@ -12,30 +34,122 @@ int main()
 	SetConsoleCP(65001);
 	SetConsoleOutputCP(65001);
 #endif
-	std::time_t t = time(nullptr);
-	std::tm *t_str = std::localtime(&t);
 
-	std::vector<std::unique_ptr<gym::simulator::Equipment>> database;
+ 	gym::Gym *mainbase_ptr;
 
-	t = time(nullptr);
-	t_str = std::localtime(&t);
-	database.push_back(std::make_unique<gym::simulator::Dumbells>("Dumbells before 12 kg.", 120.2, *t_str));
-
-	t = time(nullptr);
-	t_str = std::localtime(&t);
-	database.push_back(std::make_unique<gym::simulator::Other>("Palace", 30.99, *t_str));
-
-	t = time(nullptr);
-	t_str = std::localtime(&t);
-	database.push_back(std::make_unique<gym::simulator::ExersizeMachine>
-			("Complex blocks" , "Back", 1000, *t_str));
-
-	database[0]->print_header(std::cout);
-	for (auto ptr = database.begin(); ptr != database.end(); ptr++)
+	try
 	{
-		std::cout << *(ptr->get());
+		mainbase_ptr = new gym::Gym;
 	}
-	database[0]->print_footer(std::cout);
+	catch (std::bad_alloc &)
+	{
+		std::cout << "Bad alloc";
+		gym::input_interface::pause();
+		mainbase_ptr = ::new gym::Gym;
+	}
 
+	gym::Gym &mainbase = *mainbase_ptr;
+
+//	throw std::logic_error("generate handle");
+
+	enum menu_p
+	{
+		add = 1,
+		del,
+		find,
+		out,
+		exit
+	};
+
+	int choice;
+	while (true)
+	{
+		gym::input_interface::clear_window();
+		std::cout << "Complex work with your collection of simulators: " << std::endl
+			<< "\t\tTotal cost: " << mainbase.total_cost() << std::endl
+			<< "\t1. Add new simulator." << std::endl
+			<< "\t2. Delete simulator." << std::endl
+			<< "\t3. Find simulator for name." << std::endl
+			<< "\t4. See all simulator." << std::endl
+			<< "\t5. Exit." << std::endl;
+
+		std::cout << "Input your choice: ";
+		std::cin >> choice;
+
+		if (choice < 1 || choice > 6)
+		{
+			std::cout << "\nIncorrect choice";
+			gym::input_interface::pause();	
+			continue;
+		}
+
+		std::string name;
+		switch (choice)
+		{
+			case add:
+				gym::input_interface::clear_window();
+				std::cout << "Input name: ";
+				name = input_name();
+
+				try
+				{
+					mainbase.create_eq(name);
+				}
+				catch (std::invalid_argument &)
+				{
+					gym::input_interface::pause();
+					continue;
+				}
+				
+				break;
+
+			case del:
+				gym::input_interface::clear_window();
+				std::cout << "Input name for delete: ";
+				name = input_name();
+				try
+				{
+					mainbase.delete_eq(name);
+				}
+				catch (std::invalid_argument &)
+				{
+					gym::input_interface::pause();
+					continue;
+				}
+
+				break;
+
+			case find:
+				gym::input_interface::clear_window();
+				std::cout << "Input name for search: ";
+				name = input_name();
+				try
+				{
+					mainbase.find(name);
+				}
+				catch (std::out_of_range &)
+				{
+					gym::input_interface::pause();
+					continue;
+				}
+
+				break;
+
+			case out:
+				gym::input_interface::clear_window();
+				std::cout << mainbase << std::endl;
+
+				gym::input_interface::clear_buf();
+				std::cin.get();
+
+				break;
+
+			case exit:
+				delete mainbase_ptr;
+				return 0;
+		}
+	}
+
+	delete mainbase_ptr;
 	return 0;
 }
