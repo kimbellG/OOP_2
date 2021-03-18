@@ -10,7 +10,7 @@
 #include "include/gym.hpp"
 #include "include/eqinterface.h"
 #include "include/consolemanipulator.h"
-#include "include/get_num.h"
+#include "include/get_fromkb.hpp"
 #include "include/menu_func.hpp"
 
 std::string input_name()
@@ -80,8 +80,14 @@ int main()
 			<< "\t6. Question." << std::endl
 			<< "\t7. Exit." << std::endl;
 
-		std::cout << "Input your choice: ";
-		getnumber(choice);
+			std::cout << "Input your choice: ";
+		try {
+			choice = get_from_keyboard<int>();
+		} catch (std::runtime_error &e) {
+			std::cout << e.what();
+			gym::input_interface::pause();
+			continue;
+		}
 
 		if (choice < 1 || choice > 6)
 		{

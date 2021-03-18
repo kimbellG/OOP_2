@@ -2,13 +2,15 @@ cmake_minimum_required(VERSION 3.0)	  #Указываем версию сmake
 project(result VERSION 1 LANGUAGES C CXX)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+
 set(INCL_FILES include/data.hpp
     include/eqinterface.h
     include/gym.hpp
     include/consolemanipulator.h
-    include/get_num.h
-    include/menu_func.hpp)
-add_executable(${PROJECT_NAME} main.cpp src/gym.cpp src/consolemanipulator.cpp
+    include/menu_func.hpp
+	include/get_fromkb.hpp)
+
+add_executable(${PROJECT_NAME} main.cpp src/gym.cpp src/consolemanipulator.cpp 
     ${INCL_FILES})  #Указываем результат работы и все исходник�
 
 set_target_properties(${PROJECT_NAME} 
