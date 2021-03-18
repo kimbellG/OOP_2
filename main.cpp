@@ -9,6 +9,9 @@
 
 #include "include/gym.hpp"
 #include "include/eqinterface.h"
+#include "include/consolemanipulator.h"
+#include "include/get_num.h"
+#include "include/menu_func.hpp"
 
 std::string input_name()
 {
@@ -31,8 +34,8 @@ void (*std_term)() = std::set_terminate(term_handle);
 int main()
 {
 #ifdef WIN32
-	SetConsoleCP(65001);
-	SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 #endif
 
  	gym::Gym *mainbase_ptr;
@@ -58,6 +61,8 @@ int main()
 		del,
 		find,
 		out,
+		edit,
+		qa,
 		exit
 	};
 
@@ -71,10 +76,12 @@ int main()
 			<< "\t2. Delete simulator." << std::endl
 			<< "\t3. Find simulator for name." << std::endl
 			<< "\t4. See all simulator." << std::endl
-			<< "\t5. Exit." << std::endl;
+			<< "\t5. Edit trainers." << std::endl
+			<< "\t6. Question." << std::endl
+			<< "\t7. Exit." << std::endl;
 
 		std::cout << "Input your choice: ";
-		std::cin >> choice;
+		getnumber(choice);
 
 		if (choice < 1 || choice > 6)
 		{
@@ -143,6 +150,20 @@ int main()
 				std::cin.get();
 
 				break;
+
+			case edit:
+				gym::input_interface::clear_window();
+				std::cout << mainbase << std::endl;
+
+				mainbase.edit();
+
+				break;
+		case qa:
+			gym::input_interface::clear_window();
+            inputAndAnswerQ();
+
+			gym::input_interface::pause();
+            break;
 
 			case exit:
 				delete mainbase_ptr;

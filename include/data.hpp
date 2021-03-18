@@ -26,7 +26,14 @@ namespace gym
 			types::money __cost;
 			std::string __data;
 
+
 			bprinter::TablePrinter __tp;
+		protected:
+			enum base_attr
+			{
+				__name_i = 2,
+				__cost_i
+			};
 		public:
 					Equipment(const std::string &name, 
 					types::money cost, const std::string &purchase_date)
@@ -52,6 +59,22 @@ namespace gym
 			std::string get_purchdate() const
 			{
 				return __data;
+			}
+
+			virtual std::string set(const int attr, const std::string &value)
+			{
+				switch (attr) {
+				case __name_i:
+					__name = value;
+					break;
+				case __cost_i:
+					__cost = std::stold(value);
+					break;
+				default:
+					throw std::invalid_argument("Incorrect attribute.");
+				}
+
+				return __name;
 			}
 
 			virtual std::string get_type() const = 0;
@@ -116,6 +139,20 @@ namespace gym
 			std::string get_muscle_group() const override final
 			{
 				return __muscle_group;
+			}
+
+			std::string set(const int attr, const std::string &value) override
+			{
+				if (attr == 1)
+				{
+					__muscle_group = value;
+				}
+				else
+				{
+					Equipment::set(attr, value);
+				}
+
+				return get_name();
 			}
 		};
 

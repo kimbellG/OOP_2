@@ -6,8 +6,9 @@
 
 namespace gym
 {
-	Gym::Gym() : __tp(&std::cout)
-	{	
+	Gym::Gym() : __tp(&std::cout), __field_w({31, 31, 31, 11, 21})
+	{
+
 		__tp.AddColumn("Type", 30);
 		__tp.AddColumn("Muscle group", 30);
 		__tp.AddColumn("Name", 30);

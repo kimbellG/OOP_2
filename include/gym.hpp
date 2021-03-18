@@ -3,6 +3,8 @@
 
 #include "data.hpp"
 #include "../bprinter-master/include/bprinter/table_printer.h"
+#include "consolemanipulator.h"
+#include "eqinterface.h"
 
 #include <map>
 #include <ctime>
@@ -10,9 +12,11 @@
 namespace gym
 {
 	class Gym
-			: std::map<std::string, simulator::Equipment *>
+			: public std::map<std::string, simulator::Equipment *>
 	{
 		bprinter::TablePrinter __tp;
+		std::vector<std::size_t> __field_w;
+
 	public:
 		Gym();
 
@@ -26,6 +30,7 @@ namespace gym
 		};
 
 		void create_eq(const std::string &name);
+
 		void delete_eq(const std::string &name);
 
 		void find(const std::string &name);
@@ -50,6 +55,43 @@ namespace gym
 			source.__tp.PrintFooter();
 			
 			return out;
+		}
+
+		void edit()
+		{
+			ConsoleManipulator manip(__field_w, 1);
+
+			std::size_t index = 0;
+			std::size_t field = 0;
+			COORD start_pos = {30, 3};
+
+			while (field == 0)
+			{
+				manip.mvtable(index, field, start_pos, size(), __field_w.size() - 1);
+			}
+
+			auto iter = begin();
+			for (std::size_t i = 0; i < index; i++)
+			{
+				iter++;
+			}
+
+			std::string nw_val;
+			std::cout << "Input new value: ";
+			std::cin.ignore(20, '\n');
+			std::getline(std::cin, nw_val);
+
+			try
+			{
+				std::string nw_name = iter->second->set(field, nw_val);
+			}
+			catch (std::invalid_argument &e)
+			{
+				std::cout << e.what() << std::endl
+						  << "Repeat";
+				input_interface::pause();
+			}
+
 		}
 
 	};

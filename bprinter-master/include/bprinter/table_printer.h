@@ -85,6 +85,7 @@ public:
 	  out_stream_ = out;
   }
 
+
 private:
   void PrintHorizontalLine();
 
