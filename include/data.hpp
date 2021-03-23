@@ -10,6 +10,7 @@
 
 #include <../bprinter-master/include/bprinter/table_printer.h>
 
+
 namespace types
 {
 	typedef long double money;
@@ -24,8 +25,7 @@ namespace gym
 			std::string __name;
 
 			types::money __cost;
-			std::string __data;
-
+			std::time_t __data;
 
 			bprinter::TablePrinter __tp;
 		protected:
@@ -36,7 +36,7 @@ namespace gym
 			};
 		public:
 					Equipment(const std::string &name, 
-					types::money cost, const std::string &purchase_date)
+					types::money cost, time_t purchase_date)
 				: __name(name), __cost(cost), __data(purchase_date), __tp(&std::cout)
 				{
 					__tp.AddColumn("Type", 30);
@@ -56,9 +56,18 @@ namespace gym
 				return __cost;
 			}
 
-			std::string get_purchdate() const
+			std::string get_purchdate(const std::string &format) const
 			{
-				return __data;
+				std::tm *data_tm = std::localtime(&__data);
+				char time_str[1024];
+				int ret = std::strftime(time_str, 1024, format.c_str(), data_tm);
+	
+				if (!ret)
+				{
+					throw std::invalid_argument("Invalid value time");
+				}
+
+				return time_str;
 			}
 
 			virtual std::string set(const int attr, const std::string &value)
@@ -89,7 +98,7 @@ namespace gym
 			friend std::ostream &operator<<(std::ostream &out, gym::simulator::Equipment &source)
 			{
 				source.__tp.set_stream(&out);
-				source.__tp << source.get_type().substr(0, 30).c_str() << source.get_muscle_group().substr(0, 30).c_str() << source.__name.substr(0, 30).c_str()  << source.__cost << source.get_purchdate().substr(0, 30).c_str() ;
+				source.__tp << source.get_type().substr(0, 30).c_str() << source.get_muscle_group().substr(0, 30).c_str() << source.__name.substr(0, 30).c_str()  << source.__cost << source.get_purchdate("%x").substr(0, 30).c_str() ;
 				source.__tp.set_stream(&std::cout);
 
 				return out;
@@ -100,6 +109,11 @@ namespace gym
 				__tp.set_stream(&out);
 				__tp.PrintFooter();
 				__tp.set_stream(&std::cout);
+			}
+
+			virtual std::string string() const
+			{
+				return __name + ':' + std::to_string(__cost) + ':' + std::to_string(__data);
 			}
 
 			
@@ -113,7 +127,7 @@ namespace gym
 		{
 			public:
 				GeneralEquipment(const std::string &name, types::money cost,
-						const std::string &purchase_data)
+						time_t purchase_data)
 					: Equipment(name, cost, purchase_data)
 				{
 				}
@@ -121,6 +135,10 @@ namespace gym
 				std::string get_muscle_group() const override final
 				{
 					return "General";
+				}
+
+				std::string string() const override {
+					return Equipment::string() + ':' + "General";
 				}
 
 		};
@@ -131,7 +149,7 @@ namespace gym
 			std::string __muscle_group;
 		public:
 			SpecialEquipment(const std::string &name, const std::string muscle_group,
-					types::money cost, const std::string &purchase_data)
+					types::money cost, std::time_t purchase_data)
 				: Equipment(name, cost, purchase_data), __muscle_group(muscle_group)
 			{
 			}
@@ -154,6 +172,11 @@ namespace gym
 
 				return get_name();
 			}
+
+			std::string string() const override 
+			{
+				return Equipment::string() + ':' + __muscle_group;
+			}
 		};
 
 		 class Dumbells
@@ -161,7 +184,7 @@ namespace gym
 		 {
 			 public:
 				 Dumbells(const std::string &name, types::money cost,
-						  const std::string &purchase_data)
+						  std::time_t purchase_data)
 					 : GeneralEquipment(name, cost, purchase_data)
 				 {
 				 }
@@ -170,6 +193,11 @@ namespace gym
 				 {
 					 return "Dumbells";
 				 }
+
+				 std::string string() const override
+				 {
+					 return GeneralEquipment::string() + ':' + "Dumbells";
+				 }
 		};
 
 		class ExersizeMachine
@@ -177,7 +205,7 @@ namespace gym
 		{
 		public:
 			ExersizeMachine(const std::string &name, const std::string &muscle_group,
-					types::money cost, const std::string &purchase_data)
+					types::money cost, std::time_t purchase_data)
 				: SpecialEquipment(name, muscle_group, cost, purchase_data)
 				{
 				}
@@ -186,13 +214,18 @@ namespace gym
 			{
 				return "Exersize Machine";
 			}
+
+			std::string string() const override
+			{
+				return SpecialEquipment::string() + ':' + "ExersizeMachine";
+			}
 		};
 
 		class Other
 			: public GeneralEquipment
 		{
 		public:
-			Other(const std::string &name, types::money cost, const std::string &purchase_data)
+			Other(const std::string &name, types::money cost, std::time_t purchase_data)
 				: GeneralEquipment(name, cost, purchase_data)
 			{
 			}
@@ -200,6 +233,11 @@ namespace gym
 			std::string get_type() const override
 			{
 				return "Other";
+			}
+
+			std::string string() const override
+			{
+				return GeneralEquipment::string() + ':' + "Other";
 			}
 		};
 	};

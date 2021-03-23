@@ -8,14 +8,21 @@
 
 #include <map>
 #include <ctime>
+#include <string>
 
 namespace gym
 {
 	class Gym
-			: public std::map<std::string, simulator::Equipment *>
+			: public std::map<::std::string, simulator::Equipment *>
 	{
 		bprinter::TablePrinter __tp;
-		std::vector<std::size_t> __field_w;
+		::std::vector<::std::size_t> __field_w;
+		
+	void __load_equipment_from_file();
+	void __save_equipment_to_file();
+
+	void __create_eq_from_file_entry(const std::string &file_entry);
+		
 
 	public:
 		Gym();
@@ -30,15 +37,8 @@ namespace gym
 		};
 
 		void create_eq(const std::string &name);
-
 		void delete_eq(const std::string &name);
-
 		void find(const std::string &name);
-
-		void *operator new(std::size_t size)
-		{
-			throw std::bad_alloc();
-		}
 
 		types::money total_cost();
 

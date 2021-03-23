@@ -61,11 +61,11 @@ namespace gym
 			std::getline(std::cin, tmp);
 		}	
 
-			class InputEquipment
+		class InputEquipment
 		{
 			std::string __name;
 			types::money __cost;
-			std::tm *__data;
+			std::time_t __data;
 			
 		protected:
 			std::string __get_name()
@@ -78,17 +78,9 @@ namespace gym
 				return __cost;
 			}
 	
-			std::string __get_data(const std::string &format)
+			time_t __get_data()
 			{
-				char time_str[1024];
-				int ret = std::strftime(time_str, 1024, format.c_str(), __data);
-				
-				if (!ret)
-				{
-					throw invalid_input("Invalid value time");
-				}
-	
-				return time_str;
+				return __data;
 			}
 	
 		public:
@@ -114,9 +106,7 @@ namespace gym
 					}
 				}
 	
-				time_t t = time(nullptr);
-				__data = localtime(&t);
-	
+				__data = time(nullptr);
 			}
 	
 			class invalid_input 
@@ -148,7 +138,7 @@ namespace gym
 			simulator::Equipment *create_eq() override final
 			{
 				
-				return new simulator::Dumbells(__get_name(), __get_cost(), __get_data("%x"));
+				return new simulator::Dumbells(__get_name(), __get_cost(), __get_data());
 			}
 		};
 
@@ -168,7 +158,7 @@ namespace gym
 			simulator::Equipment *create_eq()
 			{
 				return new simulator::ExersizeMachine(__get_name(), __muscle_group,
-						__get_cost(), __get_data("%x"));
+						__get_cost(), __get_data());
 			}
 		};
 
@@ -183,7 +173,7 @@ namespace gym
 
 			simulator::Equipment *create_eq()
 			{
-				return new simulator::Other(__get_name(), __get_cost(), __get_data("%x"));
+				return new simulator::Other(__get_name(), __get_cost(), __get_data());
 			}
 		};
 	}
