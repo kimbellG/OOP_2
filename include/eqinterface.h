@@ -72,12 +72,10 @@ namespace gym
 			{
 				return __name;
 			}
-	
 			types::money __get_cost()
 			{
 				return __cost;
 			}
-	
 			time_t __get_data()
 			{
 				return __data;
@@ -176,6 +174,11 @@ namespace gym
 				return new simulator::Other(__get_name(), __get_cost(), __get_data());
 			}
 		};
+
+        std::string get_eq_name_from_file_entry(const std::string &file_entry);
+        std::shared_ptr<simulator::Equipment> create_eq_from_file_entry(const std::string &file_entry);
+
+        std::string get_eq_name_from_file_entry(const std::string &file_entry);
 	}
 }
 

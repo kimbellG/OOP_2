@@ -1,5 +1,6 @@
 #include "../include/gym.hpp"
 #include "../include/eqinterface.h"
+#include "../include/filemanager.h"
 
 #include <iostream>
 #include <memory>
@@ -115,4 +116,14 @@ namespace gym
 		return ret;
 	}
 
+    void Gym::load_equipment_from_file(const std::string &filename)
+    {
+        FileManager in(filename);
+
+        std::string file_entry;
+        while ((file_entry = in.getline()) != "")
+        {
+
+        }
+    }
 }

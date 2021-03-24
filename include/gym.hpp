@@ -18,14 +18,14 @@ namespace gym
 		bprinter::TablePrinter __tp;
 		::std::vector<::std::size_t> __field_w;
 		
-	void __load_equipment_from_file();
-	void __save_equipment_to_file();
 
-	void __create_eq_from_file_entry(const std::string &file_entry);
-		
+
 
 	public:
 		Gym();
+
+        void load_equipment_from_file(const std::string &filename);
+        void save_equipment_to_file();
 
 		enum sort_field
 		{

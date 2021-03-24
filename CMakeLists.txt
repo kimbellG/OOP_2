@@ -8,9 +8,11 @@ set(INCL_FILES include/data.hpp
     include/gym.hpp
     include/consolemanipulator.h
     include/menu_func.hpp
-	include/get_fromkb.hpp)
+    include/get_fromkb.hpp
+    include/filemanager.h
+    include/procesing_entry.hpp)
 
-add_executable(${PROJECT_NAME} main.cpp src/gym.cpp src/consolemanipulator.cpp 
+add_executable(${PROJECT_NAME} main.cpp src/gym.cpp src/consolemanipulator.cpp src/filemanager.cpp src/eqinterface.cpp
     ${INCL_FILES})  #Указываем результат работы и все исходник�
 
 set_target_properties(${PROJECT_NAME} 
