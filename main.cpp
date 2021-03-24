@@ -13,6 +13,7 @@
 #include "include/get_fromkb.hpp"
 #include "include/menu_func.hpp"
 #include "include/eqinterface.h"
+#include "unit_test/unit_test.hpp"
 
 std::string input_name()
 {
@@ -30,43 +31,6 @@ void term_handle()
 	exit(1);
 }
 
-void (*std_term)() = std::set_terminate(term_handle);
-
-bool is_current_test_entry(const std::string &str, const std::string value);
-
-void test_entrys(std::vector<std::string> strs, std::vector<std::string> values)
-{
-    if (strs.size() != values.size())
-    {
-        throw std::invalid_argument("test_entrys: strs != values");
-    }
-
-    try
-    {
-        for (auto str = strs.begin(), value = values.begin(); str != strs.end() || value != values.end(); str++, value++)
-        {
-           if (!is_current_test_entry(*str, *value))
-           {
-               throw std::runtime_error(std::string(*str + " != " + *value).c_str());
-            }
-        }
-    }
-    catch (std::runtime_error &e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
-
-    std::cout << "end of test!" << std::endl;
-    std::exit(0);
-}
-
-bool is_current_test_entry(const std::string &str, const std::string value)
-{
-    std::string result = gym::input_interface::get_eq_name_from_file_entry(str);
-    return result == value;
-}
-
-
 int main()
 {
 #ifdef WIN32
@@ -74,25 +38,22 @@ int main()
     SetConsoleOutputCP(65001);
 #endif
 
-    std::vector<std::string> strs = {"abc:zxc:asd", "qwe"};
-    std::vector<std::string> values = {"abc", "qwe"};
-
-    test_entrys(strs, values);
-
+    std::string filename = get_filename();
  	gym::Gym *mainbase_ptr;
 
 	try
 	{
-		mainbase_ptr = new gym::Gym;
+        mainbase_ptr = new gym::Gym(filename);
 	}
 	catch (std::bad_alloc &)
 	{
 		std::cout << "Bad alloc";
-		gym::input_interface::pause();
-		mainbase_ptr = ::new gym::Gym;
+        gym::input_interface::pause();
+        mainbase_ptr = ::new gym::Gym(filename);
 	}
 
 	gym::Gym &mainbase = *mainbase_ptr;
+    mainbase.load_equipment_from_file();
 
 //	throw std::logic_error("generate handle");
 
@@ -130,7 +91,7 @@ int main()
 			continue;
 		}
 
-		if (choice < 1 || choice > 6)
+        if (choice < 1 || choice > 7)
 		{
 			std::cout << "\nIncorrect choice";
 			gym::input_interface::pause();	
@@ -155,6 +116,7 @@ int main()
 					continue;
 				}
 				
+                mainbase.save_equipment_to_file();
 				break;
 
 			case del:
@@ -171,6 +133,7 @@ int main()
 					continue;
 				}
 
+                mainbase.save_equipment_to_file();
 				break;
 
 			case find:
@@ -203,14 +166,16 @@ int main()
 				std::cout << mainbase << std::endl;
 
 				mainbase.edit();
+                mainbase.save_equipment_to_file();
 
 				break;
-		case qa:
-			gym::input_interface::clear_window();
-            inputAndAnswerQ();
 
-			gym::input_interface::pause();
-            break;
+            case qa:
+                gym::input_interface::clear_window();
+                inputAndAnswerQ();
+
+                gym::input_interface::pause();
+                break;
 
 			case exit:
 				delete mainbase_ptr;
@@ -218,6 +183,6 @@ int main()
 		}
 	}
 
-	delete mainbase_ptr;
+
 	return 0;
 }

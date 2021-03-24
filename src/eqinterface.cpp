@@ -1,6 +1,8 @@
 #include <string>
 #include <utility>
-#include <exception>
+#include <stdexcept>
+#include <iostream>
+#include <memory>
 
 #include "../include/procesing_entry.hpp"
 
@@ -9,6 +11,22 @@ namespace gym {
         std::string get_eq_name_from_file_entry(const std::string &file_entry)
         {
             return get_word_by_separator(file_entry, 0);
+        }
+        std::string get_eq_cost_from_file_entry(const std::string &file_entry)
+        {
+            return get_word_by_separator(file_entry, 1);
+        }
+        std::string get_eq_date_from_file_entry(const std::string &file_entry)
+        {
+            return get_word_by_separator(file_entry, 2);
+        }
+        std::string get_eq_muscle_from_file_entry(const std::string &file_entry)
+        {
+            return get_word_by_separator(file_entry, 3);
+        }
+        std::string get_eq_type_from_file_entry(const std::string &file_entry)
+        {
+            return get_word_by_separator(file_entry, 4);
         }
 
         std::string get_word_by_separator(const std::string &str, const int number_of_word, const char separator)
@@ -20,7 +38,8 @@ namespace gym {
         std::pair<std::size_t, std::size_t> get_start_end_word(const std::string &str, const int number_of_word, const char separator)
         {
             std::size_t start = get_start_pos(str, number_of_word, separator);
-            std::size_t end = get_end_pos(str, number_of_word, separator);
+            std::size_t end = get_end_pos(str, start+1, separator);
+
             return std::make_pair(start, end);
         }
 
@@ -40,14 +59,13 @@ namespace gym {
                     throw std::invalid_argument("Invalid string with separator");
                 }
             }
-            return pos;
+            return pos + 1;
         }
 
         std::size_t get_end_pos(const std::string &str, std::size_t start_pos, const char separator)
         {
             return str.find(separator, start_pos);
         }
-
 
     }
 }

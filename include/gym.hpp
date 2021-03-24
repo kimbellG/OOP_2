@@ -17,14 +17,14 @@ namespace gym
 	{
 		bprinter::TablePrinter __tp;
 		::std::vector<::std::size_t> __field_w;
-		
 
-
+        std::string __filename;
+        static simulator::Equipment *create_eq_by_type_from_file(const std::string &name, const std::string &file_entry);
 
 	public:
-		Gym();
+        Gym(const std::string &filename);
 
-        void load_equipment_from_file(const std::string &filename);
+        void load_equipment_from_file();
         void save_equipment_to_file();
 
 		enum sort_field
@@ -38,6 +38,7 @@ namespace gym
 
 		void create_eq(const std::string &name);
 		void delete_eq(const std::string &name);
+
 		void find(const std::string &name);
 
 		types::money total_cost();

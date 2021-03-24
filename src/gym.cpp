@@ -7,7 +7,8 @@
 
 namespace gym
 {
-	Gym::Gym() : __tp(&std::cout), __field_w({31, 31, 31, 11, 21})
+    Gym::Gym(const std::string &filename)
+        : __tp(&std::cout), __field_w({31, 31, 31, 11, 21}), __filename(filename)
 	{
 
 		__tp.AddColumn("Type", 30);
@@ -116,14 +117,50 @@ namespace gym
 		return ret;
 	}
 
-    void Gym::load_equipment_from_file(const std::string &filename)
+    void Gym::load_equipment_from_file()
     {
-        FileManager in(filename);
+        FileManager in(__filename);
 
         std::string file_entry;
         while ((file_entry = in.getline()) != "")
         {
+           std::string name = input_interface::get_eq_name_from_file_entry(file_entry);
+           operator[](name) = create_eq_by_type_from_file(name, file_entry);
+        }
+    }
 
+    simulator::Equipment *Gym::create_eq_by_type_from_file(const std::string &name, const std::string &file_entry)
+    {
+
+        std::string type = input_interface::get_eq_type_from_file_entry(file_entry);
+        input_interface::InputEquipment *new_eq;
+
+        if (type == "Dumbells")
+        {
+            new_eq = new input_interface::InputDumbells(name, file_entry);
+        }
+        else if (type == "ExersizeMachine")
+        {
+            new_eq = new input_interface::InputEM(name, file_entry);
+        }
+        else if (type == "Other")
+        {
+            new_eq = new input_interface::InputOther(name, file_entry);
+        }
+
+        simulator::Equipment *result = new_eq->create_eq();
+
+        delete new_eq;
+        return result;
+    }
+
+    void Gym::save_equipment_to_file()
+    {
+        std::ofstream out(__filename, std::ios_base::out | std::ios_base::trunc);
+
+        for (auto eq : *this)
+        {
+            out << eq.second->string() << '\n';
         }
     }
 }

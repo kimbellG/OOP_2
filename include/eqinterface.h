@@ -9,11 +9,7 @@
 #include <string>
 #include <ctime>
 
-#ifdef WIN32
 #include <windows.h>
-#else
-#include <unistd.h>
-#endif //WIN32
 
 #include "data.hpp"
 
@@ -44,11 +40,7 @@ namespace gym
 			{
 				std::cout << '.';
 				std::cout.flush();
-#ifdef WIN32
 				Sleep(1000);
-#else
-				sleep(1);
-#endif //WIN32
 			}
 
 			std::cout << std::endl;
@@ -60,6 +52,13 @@ namespace gym
 			clear_buf();
 			std::getline(std::cin, tmp);
 		}	
+
+        std::string get_eq_name_from_file_entry(const std::string &file_entry);
+        std::string get_eq_cost_from_file_entry(const std::string &file_entry);
+        std::string get_eq_date_from_file_entry(const std::string &file_entry);
+        std::string get_eq_muscle_from_file_entry(const std::string &file_entry);
+        std::string get_eq_type_from_file_entry(const std::string &file_entry);
+
 
 		class InputEquipment
 		{
@@ -100,12 +99,20 @@ namespace gym
 					}
 					catch (...)
 					{
-						std::cout << "Invalide input cost: " << std::endl;
+                        std::cout << "Invalid input cost: " << std::endl;
 					}
 				}
 	
 				__data = time(nullptr);
 			}
+
+            InputEquipment(const std::string &name_eq, const std::string &file_entry)
+            {
+                __name = name_eq;
+                __cost = std::stold(get_eq_cost_from_file_entry(file_entry));
+                __data = std::stoul(get_eq_date_from_file_entry(file_entry));
+
+            }
 	
 			class invalid_input 
 				: public std::invalid_argument
@@ -118,6 +125,7 @@ namespace gym
 			};
 	
 			virtual simulator::Equipment *create_eq() = 0;
+            simulator::Equipment *create_eq_from_file();
 			
 			virtual ~InputEquipment()
 			{
@@ -132,6 +140,9 @@ namespace gym
 				: InputEquipment(name)
 			{
 			}
+
+            InputDumbells(const std::string &name, const std::string &file_entry)
+                : InputEquipment(name, file_entry) {}
 		
 			simulator::Equipment *create_eq() override final
 			{
@@ -153,11 +164,17 @@ namespace gym
 				std::cin >> __muscle_group;
 			}
 
+            InputEM(const std::string &name, const std::string &file_entry)
+                : InputEquipment(name, file_entry)
+            {
+                __muscle_group = get_eq_muscle_from_file_entry(file_entry);
+            }
+
 			simulator::Equipment *create_eq()
 			{
 				return new simulator::ExersizeMachine(__get_name(), __muscle_group,
-						__get_cost(), __get_data());
-			}
+                        __get_cost(), __get_data());
+            }
 		};
 
 		class InputOther
@@ -169,6 +186,9 @@ namespace gym
 			{
 			}
 
+            InputOther(const std::string &name, const std::string &file_entry)
+                : InputEquipment(name, file_entry) {}
+
 			simulator::Equipment *create_eq()
 			{
 				return new simulator::Other(__get_name(), __get_cost(), __get_data());
@@ -178,7 +198,7 @@ namespace gym
         std::string get_eq_name_from_file_entry(const std::string &file_entry);
         std::shared_ptr<simulator::Equipment> create_eq_from_file_entry(const std::string &file_entry);
 
-        std::string get_eq_name_from_file_entry(const std::string &file_entry);
+
 	}
 }
 

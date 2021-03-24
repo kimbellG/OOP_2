@@ -4,6 +4,9 @@
 #include <iostream>
 #include <string>
 
+#include "get_fromkb.hpp"
+#include "eqinterface.h"
+
 bool isCurrentAnswer(std::string rightAnswer, std::string userAnswer);
 
 template<typename T> inline T getFromKeyBoard() {
@@ -31,6 +34,14 @@ inline void inputAndAnswerQ() {
 
 inline bool isCurrentAnswer(std::string rightAnswer, std::string userAnswer) {
     return rightAnswer == userAnswer;
+}
+
+std::string get_filename()
+{
+    gym::input_interface::clear_window();
+    std::cout << "Input name of file for work: ";
+    std::string filename = get_from_keyboard<std::string>();
+    return filename;
 }
 
 #endif // MENU_FUNC_HPP

@@ -10,9 +10,11 @@ set(INCL_FILES include/data.hpp
     include/menu_func.hpp
     include/get_fromkb.hpp
     include/filemanager.h
-    include/procesing_entry.hpp)
+    include/procesing_entry.hpp
+    unit_test/unit_test.hpp)
 
 add_executable(${PROJECT_NAME} main.cpp src/gym.cpp src/consolemanipulator.cpp src/filemanager.cpp src/eqinterface.cpp
+    unit_test/test_separat_word.cpp
     ${INCL_FILES})  #Указываем результат работы и все исходник�
 
 set_target_properties(${PROJECT_NAME} 

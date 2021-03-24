@@ -6,12 +6,11 @@
 
 class FileManager
 {
-    std::fstream in;
+    std::ifstream in;
 public:
     FileManager(const std::string &filename);
 
     std::string getline();
-    void save_string_to_file(const std::string &value);
 };
 
 #endif // FILEMANAGER_H
